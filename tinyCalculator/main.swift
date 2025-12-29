@@ -1,47 +1,68 @@
-print("Добро пожаловать в Tiny Calculator!")
+var history: [String] = []
 
-let operation = getUserData(description: "Введите операцию")
-let firstNumber = getUserData(description: "Введите первое число")
-let secondNumber = getUserData(description: "Введите второе число")
-
-print("Идёт вычисление примера " + firstNumber + " " + operation + " " + secondNumber)
-
-if let firstNumber = Int(firstNumber) {
-    if let secondNumber = Int(secondNumber){
-        calculate(operation: operation,
-                  firstNumber: firstNumber,
-                  secondNumber: secondNumber)
-    } else {
-        print("Второе число введено неправильно.")
+while true {
+    let operation = getUserIntut("""
+    Введите:
+    +, -, *, /....вычисление
+    q.............выйти
+    h.............показать историю 
+    """)
+    
+    if operation == "q" {
+        print("Пока!")
+        break
     }
-} else {
-    print("Первое число введено неправильно.")
+    
+    if operation == "h" {
+        print("История успешных вычислений:")
+        for expression in history {
+            print(expression)
+        }
+        continue
+    }
+        
+    let firstNumberInput = getUserIntut("Введите первое число:")
+    let secondNumberInput = getUserIntut("Введите второе число: ")
+    
+    if let firstNumber = Int(firstNumberInput) {
+        if let secondNumber = Int(secondNumberInput){
+            
+            let result = calculate(operation, firstNumber, secondNumber)
+            
+            if let result {
+                let expression = "\(firstNumberInput) \(operation) \(secondNumberInput) = " + String(result)
+                history.append(expression)
+                print(expression)
+                print("-----------------")
+            }
+            
+        } else {
+            print("Вы ввели неверно второе число!")
+        }
+    } else {
+        print("Вы ввели неверно первое число!")
+    }
 }
 
-func getUserData (description: String) -> String {
-    print(description)
+func getUserIntut (_ message: String) -> String {
+    print(message)
     return readLine() ?? ""
 }
 
-func printResult(_ result: Int) {
-    print("Результат \(result)")
-}
-
-func calculate(operation: String,
-               firstNumber: Int,
-               secondNumber: Int) {
+func calculate (_ operation: String, _ firstNumber: Int, _ secondNumber: Int) -> Int? {
     switch operation {
-    case "+": printResult(firstNumber + secondNumber)
-    case "-": printResult(firstNumber - secondNumber)
-    case "*": printResult(firstNumber * secondNumber)
+    case "+": return firstNumber + secondNumber
+    case "-": return firstNumber - secondNumber
+    case "*": return firstNumber * secondNumber
     case "/":
         if secondNumber != 0 {
-            printResult(firstNumber / secondNumber)
+            return firstNumber / secondNumber
         } else {
-            print("Деление на ноль запрещено.")
+            print("Делить на 0 нельзя!")
+            return nil
         }
-        
-    default: print("Операция введена неверно.")
+    default: print("Вы ввели неверную операцию!")
+        return nil
     }
 }
 
