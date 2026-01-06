@@ -1,69 +1,91 @@
+import Darwin
+
+print("Добро пожаловать в TinyCalculator")
 var history: [String] = []
 
 while true {
-    let operation = getUserIntut("""
-    Введите:
-    +, -, *, /....вычисление
-    q.............выйти
-    h.............показать историю 
-    """)
+    print("""
+-----------------------
+Выберите команду:
+с - вычислить (+ - * /)
+h - показать историю
+q - выйти
+""")
     
-    if operation == "q" {
-        print("Пока!")
-        break
-    }
+    let comand = getUserInput()
     
-    if operation == "h" {
-        print("История успешных вычислений:")
-        for expression in history {
-            print(expression)
-        }
-        continue
-    }
-        
-    let firstNumberInput = getUserIntut("Введите первое число:")
-    let secondNumberInput = getUserIntut("Введите второе число: ")
-    
-    if let firstNumber = Int(firstNumberInput) {
-        if let secondNumber = Int(secondNumberInput){
-            
-            let result = calculate(operation, firstNumber, secondNumber)
-            
-            if let result {
-                let expression = "\(firstNumberInput) \(operation) \(secondNumberInput) = " + String(result)
-                history.append(expression)
-                print(expression)
-                print("-----------------")
-            }
-            
-        } else {
-            print("Вы ввели неверно второе число!")
-        }
-    } else {
-        print("Вы ввели неверно первое число!")
+    switch comand {
+        case "c":
+            calculate()
+        case "h":
+            showHistory()
+        case "q":
+            print("Пока!")
+            exit(0)
+        default:
+            print("Команда введена неверно.")
     }
 }
 
-func getUserIntut (_ message: String) -> String {
-    print(message)
-    return readLine() ?? ""
+func showHistory() {
+    print("История успешных вычислений:")
+    guard !history.isEmpty else {
+        print("В истории нет записей.")
+        return
+    }
+    for expression in history {
+        print(expression)
+    }
 }
 
-func calculate (_ operation: String, _ firstNumber: Int, _ secondNumber: Int) -> Int? {
+func calculate() {
+    print("Введите операцию +, -, * или /")
+    let operation = getUserInput()
+    guard operation == "+" || operation == "-" || operation == "*" || operation == "/" else {
+        print("Введена некорректная операция")
+        return
+    }
+    
+    print("Введите первое число")
+    let firstNumber = getUserInput()
+    guard let firstNumber = Int(firstNumber) else {
+        print("Введено некорректное число")
+        return
+    }
+    
+    print("Введите второе число")
+    let secondNumber = getUserInput()
+    guard let secondNumber = Int(secondNumber) else {
+        print("Введено некорректное число")
+        return
+    }
+    
+    let expression = "\(firstNumber) \(operation) \(secondNumber)"
+    print("Вычисляю " + expression)
+    
+    let result: Int
     switch operation {
-    case "+": return firstNumber + secondNumber
-    case "-": return firstNumber - secondNumber
-    case "*": return firstNumber * secondNumber
+    case "+":
+        result = firstNumber + secondNumber
+    case "-":
+        result = firstNumber - secondNumber
+    case "*":
+        result = firstNumber * secondNumber
+    case "/" where secondNumber == 0:
+        print("На ноль делить запрещено!")
+        return
     case "/":
-        if secondNumber != 0 {
-            return firstNumber / secondNumber
-        } else {
-            print("Делить на 0 нельзя!")
-            return nil
-        }
+        result = firstNumber / secondNumber
     default: print("Вы ввели неверную операцию!")
-        return nil
+        return
     }
+    
+    print("Ответ \(result)")
+    history.append(expression + " = " + String(result))
+}
+
+func getUserInput () -> String {
+    return readLine() ?? ""
 }
 
 
