@@ -39,17 +39,17 @@ func showHistory() {
 }
 
 func calculate() {
-    print("Введите операцию +, -, * или /")
-    let operation = getUserInput()
-    guard operation == "+" || operation == "-" || operation == "*" || operation == "/" else {
-        print("Введена некорректная операция")
-        return
-    }
-    
     print("Введите первое число")
     let firstNumber = getUserInput()
     guard let firstNumber = Int(firstNumber) else {
         print("Введено некорректное число")
+        return
+    }
+    
+    print("Введите первую операцию +, -, * или /")
+    let operationOne = getUserInput()
+    guard operationOne == "+" || operationOne == "-" || operationOne == "*" || operationOne == "/" else {
+        print("Введена некорректная операция")
         return
     }
     
@@ -60,25 +60,36 @@ func calculate() {
         return
     }
     
-    let expression = "\(firstNumber) \(operation) \(secondNumber)"
-    print("Вычисляю " + expression)
-    
-    let result: Int
-    switch operation {
-    case "+":
-        result = firstNumber + secondNumber
-    case "-":
-        result = firstNumber - secondNumber
-    case "*":
-        result = firstNumber * secondNumber
-    case "/" where secondNumber == 0:
-        print("На ноль делить запрещено!")
-        return
-    case "/":
-        result = firstNumber / secondNumber
-    default: print("Вы ввели неверную операцию!")
+    let intermediateResult = operationOnTwoNumbers(firstNumber,
+                                                   secondNumber,
+                                                   operationOne)
+    guard let intermediateResult else {
         return
     }
+    
+    print("Введите вторую операцию +, -, * или /")
+    let operationTwo = getUserInput()
+    guard operationTwo == "+" || operationTwo == "-" || operationTwo == "*" || operationTwo == "/" else {
+        print("Введена некорректная операция")
+        return
+    }
+    
+    print("Введите третье число")
+    let thirdNumber = getUserInput()
+    guard let thirdNumber = Int(thirdNumber) else {
+        print("Введено некорректное число")
+        return
+    }
+    
+    let result = operationOnTwoNumbers(intermediateResult,
+                                       thirdNumber,
+                                       operationTwo)
+    guard let result else {
+        return
+    }
+    
+    let expression = "(\(firstNumber) \(operationOne) \(secondNumber)) \(operationTwo) \(thirdNumber)"
+    print("Вычисляю " + expression)
     
     print("Ответ \(result)")
     history.append(expression + " = " + String(result))
@@ -86,6 +97,26 @@ func calculate() {
 
 func getUserInput () -> String {
     return readLine() ?? ""
+}
+
+func operationOnTwoNumbers (_ firstNumber: Int,
+                           _ secondNumber: Int,
+                           _ operation: String) -> Int? {
+    switch operation {
+    case "+":
+        return firstNumber + secondNumber
+    case "-":
+        return firstNumber - secondNumber
+    case "*":
+        return firstNumber * secondNumber
+    case "/" where secondNumber == 0:
+        print("На ноль делить запрещено!")
+        return nil
+    case "/":
+        return firstNumber / secondNumber
+    default: print("Вы ввели неверную операцию!")
+        return nil
+    }
 }
 
 
