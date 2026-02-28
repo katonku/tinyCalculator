@@ -60,22 +60,29 @@ func calculate() {
         return
     }
     
-    let expression = "\(firstNumber) \(operation) \(secondNumber)"
+    print("Введите третье число")
+    let thirdNumber = getUserInput()
+    guard let thirdNumber = Int(thirdNumber) else {
+        print("Введено некорректное число")
+        return
+    }
+    
+    let expression = "\(firstNumber) \(operation) \(secondNumber) \(operation) \(thirdNumber)"
     print("Вычисляю " + expression)
     
     let result: Int
     switch operation {
     case "+":
-        result = firstNumber + secondNumber
+        result = firstNumber + secondNumber + thirdNumber
     case "-":
-        result = firstNumber - secondNumber
+        result = firstNumber - secondNumber - thirdNumber
     case "*":
-        result = firstNumber * secondNumber
-    case "/" where secondNumber == 0:
+        result = firstNumber * secondNumber * thirdNumber
+    case "/" where secondNumber == 0 || thirdNumber == 0:
         print("На ноль делить запрещено!")
         return
     case "/":
-        result = firstNumber / secondNumber
+        result = firstNumber / secondNumber / thirdNumber
     default: print("Вы ввели неверную операцию!")
         return
     }
